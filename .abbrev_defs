@@ -43,20 +43,26 @@
     ;; FOSS programs
     ("foss" "Free and Open Source Software")
     ("g3" "Godot 3")
+    ("gd3" "Godot 3")
     ("gge" "Godot game engine")
     ("gds" "GDscript")
 
     ;; Tutorials
     ("ux" "user experience")
     ("ga" "game artist")
+    ("ge" "game engine")
     ("gc" "game creation")
     ("gd" "game design")
     ("gdr" "game designer")
-
     ("gdq" "GDquest")
 
+    ("cm" "community manager")
+    ("mkt" "marketing")
+    ("cmt" "communication")
+
     ;; regex
-    ("xaz" "\\([A-Za-z0-9]+\\)" )))
+    ("raz" "\\([A-Za-z0-9]+\\)" )
+))
 
 (define-abbrev-table 'Buffer-menu-mode-abbrev-table '())
 
