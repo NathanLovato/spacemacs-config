@@ -341,6 +341,10 @@ you should place your code here."
   ;; Use ag for search
   (require 'helm-bookmark)
 
+  ;; Test fix for Python/ anaconda-mode
+  (remove-hook 'anaconda-mode-response-read-fail-hook
+               'anaconda-mode-show-unreadable-response)
+  (setq url-proxy-services '(("http" . "127.0.0.1")))
   ;; Replace ispell with aspell for spell checking with flycheck
   (add-to-list 'exec-path "C:/tools/aspell/bin")
   (setq ispell-program-name "aspell")
