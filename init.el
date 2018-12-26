@@ -21,7 +21,7 @@ This function should only modify configuration layer settings."
      html
      pandoc
      ranger
-     treemacs
+     ;; treemacs
      markdown
      multiple-cursors
      org
@@ -30,13 +30,13 @@ This function should only modify configuration layer settings."
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
                       auto-completion-tab-key-behavior 'complete
+                      auto-completion-enable-help-tooltip t
 
                       auto-completion-complete-with-key-sequence nil
 
                       auto-completion-enable-sort-by-usage t
 
                       auto-completion-enable-snippets-in-popup t
-                      auto-completion-private-snippets-directory nil
                       )
      (colors :variables
              colors-colorize-identifiers 'variables)
@@ -111,7 +111,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-switch-to-buffer-prefers-purpose nil
 
    dotspacemacs-loading-progress-bar nil
-   dotspacemacs-fullscreen-at-startup nil
+   dotspacemacs-fullscreen-at-startup t
 
    dotspacemacs-fullscreen-use-non-native nil
    dotspacemacs-maximized-at-startup t
@@ -122,6 +122,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-show-transient-state-title t
    dotspacemacs-show-transient-state-color-guide t
    dotspacemacs-mode-line-unicode-symbols t
+   dotspacemacs-mode-line-theme 'spacemacs
 
    dotspacemacs-smooth-scrolling t
 
@@ -140,7 +141,7 @@ This function should only modify configuration layer settings."
 
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
-   dotspacemacs-folding-method 'origami
+   dotspacemacs-folding-method 'evil
 
    ;; If non-nil `smartparens-strict-mode' will be enabled in programming modes.
    dotspacemacs-smartparens-strict-mode nil
@@ -312,7 +313,7 @@ This function is called at the very end of Spacemacs initialization."
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
    (quote
-    (treemacs-projectile doom-modeline counsel ivy treemacs easy-hugo flx anzu undo-tree bind-map popup glsl-mode emoji-cheat-sheet-plus company-emoji xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help monokai-alt-theme base16-theme monokai-theme company-flx color-identifiers-mode rainbow-mode rainbow-identifiers ledger-mode flycheck-ledger evil-cleverparens paredit evil-snipe org-mime highlight yaml-mode ghub let-alist f web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor js2-mode js-doc company-tern tern coffee-mode flyspell-correct-helm pkg-info epl goto-chg flyspell-popup flyspell-correct auto-dictionary company-quickhelp dash-functional iedit smartparens s toml-mode racer flycheck-rust seq cargo rust-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data csv-mode packed avy async magit-gh-pulls github-search github-clone github-browse-file gist gh marshal logito pcache ranger yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic evil-unimpaired powershell org-category-capture evil projectile dash helm-themes helm-swoop helm-projectile helm-mode-manager helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag ace-jump-helm-line pandoc-mode ox-pandoc ht deft smeargle orgit org-projectile org-present org-pomodoro alert log4e gntp org-download magit-gitflow htmlize gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit with-editor company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete mmm-mode markdown-toc markdown-mode gh-md ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-make helm helm-core google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode bind-key auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link)))
+    (org-brain emojify editorconfig doom-modeline diff-hl counsel ivy easy-hugo flx anzu undo-tree bind-map popup glsl-mode emoji-cheat-sheet-plus company-emoji xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help monokai-alt-theme base16-theme monokai-theme company-flx color-identifiers-mode rainbow-mode rainbow-identifiers ledger-mode flycheck-ledger evil-cleverparens paredit evil-snipe org-mime highlight yaml-mode ghub let-alist f web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor js2-mode js-doc company-tern tern coffee-mode flyspell-correct-helm pkg-info epl goto-chg flyspell-popup flyspell-correct auto-dictionary company-quickhelp dash-functional iedit smartparens s toml-mode racer flycheck-rust seq cargo rust-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data csv-mode packed avy async magit-gh-pulls github-search github-clone github-browse-file gist gh marshal logito pcache ranger yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic evil-unimpaired powershell org-category-capture evil projectile dash helm-themes helm-swoop helm-projectile helm-mode-manager helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag ace-jump-helm-line pandoc-mode ox-pandoc ht deft smeargle orgit org-projectile org-present org-pomodoro alert log4e gntp org-download magit-gitflow htmlize gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit with-editor company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete mmm-mode markdown-toc markdown-mode gh-md ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-make helm helm-core google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode bind-key auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link)))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(vc-annotate-background nil)
