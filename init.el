@@ -21,20 +21,21 @@ This function should only modify configuration layer settings."
      helm
      html
      pandoc
-     ranger
+     (ranger :variables
+              ranger-show-preview t
+              ranger-enter-with-minus t
+              ranger-show-hidden t)
      markdown
      org
-     python
+     (python :variables python-backend 'lsp)
+     lsp
      yaml
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
                       auto-completion-tab-key-behavior 'complete
                       auto-completion-enable-help-tooltip t
-
                       auto-completion-complete-with-key-sequence nil
-
                       auto-completion-enable-sort-by-usage t
-
                       auto-completion-enable-snippets-in-popup t
                       )
      (colors :variables
@@ -43,15 +44,13 @@ This function should only modify configuration layer settings."
      (shell :variables
             shell-default-height 50
             shell-default-position 'bottom
-            shell-default-shell 'shell
-            )
+            shell-default-shell 'ansi-term)
      (spell-checking :variables
                      spell-checking-enable-auto-dictionary t
                      enable-flyspell-auto-completion t
                      spell-checking-enable-by-default nil)
      (syntax-checking :variables
-                      syntax-checking-enable-by-default t
-                      )
+                      syntax-checking-enable-by-default t)
      )
    dotspacemacs-additional-packages '()
    dotspacemacs-frozen-packages '()
@@ -65,20 +64,18 @@ This function should only modify configuration layer settings."
   You should not put any user code in there besides modifying the variable
   values."
   (setq-default
-   dotspacemacs-elpa-https nil
+   dotspacemacs-elpa-https t
    dotspacemacs-elpa-timeout 5
-   dotspacemacs-check-for-update t
+   dotspacemacs-check-for-update nil
    dotspacemacs-elpa-subdirectory nil
    dotspacemacs-editing-style 'vim
    dotspacemacs-verbose-loading nil
    dotspacemacs-startup-banner 'nil
    dotspacemacs-startup-lists '((agenda . 5)
                                 (todos . 5)
-                                (recents . 5)
-                                (projects . 7))
+                                (projects . 5))
    dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'org-mode
-   ;; Press <SPC> T n to cycle to the next theme in the list
    dotspacemacs-themes '(spacemacs-dark
                          spacemacs-light)
    dotspacemacs-colorize-cursor-according-to-state t
@@ -126,12 +123,7 @@ This function should only modify configuration layer settings."
 
    dotspacemacs-smooth-scrolling t
 
-   ;; Control line numbers activation.
-   ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
-   ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
-   ;; This variable can also be set to a property list for finer control:
-   ;; (default nil)
-   dotspacemacs-line-numbers '(:relative nil
+   dotspacemacs-line-numbers '(:relative t
                                          :disabled-for-modes dired-mode
                                          doc-view-mode
                                          pdf-view-mode
@@ -139,46 +131,21 @@ This function should only modify configuration layer settings."
                                          :size-limit-kb 1000)
 
 
-   ;; Code folding method. Possible values are `evil' and `origami'.
-   ;; (default 'evil)
    dotspacemacs-folding-method 'evil
 
-   ;; If non-nil `smartparens-strict-mode' will be enabled in programming modes.
-   dotspacemacs-smartparens-strict-mode nil
+   dotspacemacs-smartparens-strict-mode t
 
    dotspacemacs-highlight-delimiters 'all
    dotspacemacs-persistent-server t
    dotspacemacs-search-tools '("rg" "ag" "pt" "ack" "grep")
 
-   ;; Format specification for setting the frame title.
-   ;; %a - the `abbreviated-file-name', or `buffer-name'
-   ;; %t - `projectile-project-name'
-   ;; %I - `invocation-name'
-   ;; %S - `system-name'
-   ;; %U - contents of $USER
-   ;; %b - buffer name
-   ;; %f - visited file name
-   ;; %F - frame name
-   ;; %s - process status
-   ;; %p - percent of buffer above top of window, or Top, Bot or All
-   ;; %P - percent of buffer above bottom of window, perhaps plus Top, or Bot or All
-   ;; %m - mode name
-   ;; %n - Narrow if appropriate
-   ;; %z - mnemonics of buffer, terminal, and keyboard coding systems
-   ;; %Z - like %z, but including the end-of-line format
-   ;; (default "%I@%S")
    dotspacemacs-frame-title-format "%I@%S"
    dotspacemacs-icon-title-format nil
 
    dotspacemacs-whitespace-cleanup 'trailing
 
-   ;; Either nil or a number of seconds. If non-nil zone out after the specified
-   ;; number of seconds. (default nil)
    dotspacemacs-zone-out-when-idle nil
 
-   ;; Run `spacemacs/prettify-org-buffer' when
-   ;; visiting README.org files of Spacemacs.
-   ;; (default nil)
    dotspacemacs-pretty-docs nil))
 
 (defun dotspacemacs/user-env ()
@@ -209,8 +176,8 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   ;; Org mode settings
   (setq org-agenda-files
-    (quote
-     ("~/Dropbox/org/krita.org" "~/Dropbox/org/videos.org" "~/Dropbox/org/godot-3-course.org" "~/Dropbox/org/godot.org" "~/Dropbox/org/todo_next.org" "~/Dropbox/org/todo.org")))
+        (quote
+         ("~/Dropbox/org/krita.org" "~/Dropbox/org/videos.org" "~/Dropbox/org/godot-3-course.org" "~/Dropbox/org/godot.org" "~/Dropbox/org/todo_next.org" "~/Dropbox/org/todo.org" "~/Dropbox/org/kickstarter.org")))
   (setq org-todo-keywords
         '((sequence "TODO" "PROGRESS" "NEXT" "|" "DONE" "DELEGATED" "CANCELLED")))
   (setq org-support-shift-select t)
@@ -226,59 +193,13 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(compilation-message-face (quote default))
- '(evil-want-Y-yank-to-eol nil)
- '(fci-rule-color "#3C3D37")
- '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
- '(highlight-tail-colors
-   (quote
-    (("#3C3D37" . 0)
-     ("#679A01" . 20)
-     ("#4BBEAE" . 30)
-     ("#1DB4D0" . 50)
-     ("#9A8F21" . 60)
-     ("#A75B00" . 70)
-     ("#F309DF" . 85)
-     ("#3C3D37" . 100))))
- '(magit-diff-use-overlays nil)
- '(org-agenda-files
-   (quote
-    ("~/Dropbox/org/recurring_tasks.org" "~/Dropbox/org/kickstarter.org" "~/Dropbox/org/krita.org" "~/Dropbox/org/videos.org" "~/Dropbox/org/godot-3-course.org" "~/Dropbox/org/godot.org" "~/Dropbox/org/todo_next.org" "~/Dropbox/org/todo.org")))
  '(package-selected-packages
    (quote
-    (yasnippet-snippets writeroom-mode visual-fill-column symon string-inflection spaceline-all-the-icons prettier-js pippel pipenv password-generator overseer org-brain nameless magithub ghub+ apiwrap treepy graphql magit-svn json-navigator hierarchy multiple-cursors insert-shebang importmagic epc ctable concurrent deferred impatient-mode helm-xref helm-purpose window-purpose imenu-list helm-org-rifle helm-git-grep gitignore-templates git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter flycheck-bashate fish-mode evil-org evil-lion evil-goggles emojify editorconfig doom-modeline eldoc-eval shrink-path all-the-icons memoize diff-hl counsel swiper ivy company-shell centered-cursor-mode browse-at-remote font-lock+ dotenv-mode easy-hugo flx anzu undo-tree bind-map popup glsl-mode emoji-cheat-sheet-plus company-emoji xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help monokai-alt-theme base16-theme monokai-theme company-flx color-identifiers-mode rainbow-mode rainbow-identifiers ledger-mode flycheck-ledger evil-cleverparens paredit evil-snipe org-mime highlight yaml-mode ghub let-alist f web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor js2-mode js-doc company-tern tern coffee-mode flyspell-correct-helm pkg-info epl goto-chg flyspell-popup flyspell-correct auto-dictionary company-quickhelp dash-functional iedit smartparens s toml-mode racer flycheck-rust seq cargo rust-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data csv-mode packed avy async magit-gh-pulls github-search github-clone github-browse-file gist gh marshal logito pcache ranger yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic evil-unimpaired powershell org-category-capture evil projectile dash helm-themes helm-swoop helm-projectile helm-mode-manager helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag ace-jump-helm-line pandoc-mode ox-pandoc ht deft smeargle orgit org-projectile org-present org-pomodoro alert log4e gntp org-download magit-gitflow htmlize gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit with-editor company-statistics company auto-yasnippet yasnippet ac-ispell auto-complete mmm-mode markdown-toc markdown-mode gh-md ws-butler winum which-key wgrep volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline smex restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint ivy-hydra info+ indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-make helm helm-core google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode bind-key auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link)))
- '(pos-tip-background-color "#FFFACE")
- '(pos-tip-foreground-color "#272822")
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#F92672")
-     (40 . "#CF4F1F")
-     (60 . "#C26C0F")
-     (80 . "#E6DB74")
-     (100 . "#AB8C00")
-     (120 . "#A18F00")
-     (140 . "#989200")
-     (160 . "#8E9500")
-     (180 . "#A6E22E")
-     (200 . "#729A1E")
-     (220 . "#609C3C")
-     (240 . "#4E9D5B")
-     (260 . "#3C9F79")
-     (280 . "#A1EFE4")
-     (300 . "#299BA6")
-     (320 . "#2896B5")
-     (340 . "#2790C3")
-     (360 . "#66D9EF"))))
- '(vc-annotate-very-old-color nil)
- '(weechat-color-list
-   (quote
-    (unspecified "#272822" "#3C3D37" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0"))))
+    (google-translate forge centered-cursor-mode counsel swiper ivy window-purpose helm lsp-mode treemacs ace-window hydra yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toml-mode toc-org tagedit symon string-inflection spaceline-all-the-icons smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs ranger rainbow-mode rainbow-identifiers rainbow-delimiters racer pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pippel pipenv pip-requirements pfuture persp-mode pcre2el password-generator paradox pandoc-mode ox-pandoc overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless multi-term move-text mmm-mode markdown-toc magithub magit-svn magit-gitflow macrostep lsp-ui lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic impatient-mode imenu-list hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy font-lock+ flyspell-popup flyspell-correct-helm flycheck-rust flycheck-pos-tip flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emojify emoji-cheat-sheet-plus emmet-mode elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish diff-hl define-word cython-mode csv-mode counsel-projectile company-web company-tern company-statistics company-shell company-quickhelp company-lsp company-emoji company-anaconda column-enforce-mode color-identifiers-mode closql clean-aindent-mode cargo browse-at-remote auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+ )
 )
