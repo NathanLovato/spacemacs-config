@@ -12,6 +12,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layer-path '()
    dotspacemacs-configuration-layers
    '(rust
+     csharp
      javascript
      csv
      emacs-lisp
@@ -20,13 +21,51 @@ This function should only modify configuration layer settings."
      github
      helm
      html
+     (mu4e :variables
+
+           ;; Base config
+           mu4e-get-mail-command "offlineimap -q"
+           mu4e-update-interval 28800
+           mu4e-confirm-quit nil
+           mu4e-view-show-images t
+           mu4e-view-show-addresses t
+           mu4e-compose-signature-auto-include t
+
+           ;; Sending email
+           send-mail-function 'smtpmail-send-it
+           message-send-mail-function 'smtpmail-send-it
+           smtpmail-default-smtp-server "SSL0.OVH.NET"
+           smtpmail-smtp-server "SSL0.OVH.NET"
+           smtpmail-stream-type 'ssl
+           smtpmail-smtp-service 465
+
+           ;; Mail folders
+           mu4e-sent-folder "/INBOX.Sent"
+           mu4e-trash-folder "/INBOX.Trash"
+           mu4e-refile-folder "/INBOX.Archive"
+           mu4e-drafts-folder "/INBOX.Drafts"
+           mu4e-attachment-dir "~/Downloads"
+
+           ;; User config
+           ;; Not using a context at the moment
+           mu4e-user-mail-address-list '("nathan@gdquest.com" "natlovato@orange.fr")
+           mu4e-reply-to-address "nathan@gdquest.com"
+           user-mail-address "nathan@gdquest.com"
+           smtpmail-smtp-user "nathan@gdquest.com"
+           user-full-name  "Nathan GDquest"
+           mu4e-compose-signature
+           "Nathan\nhttps://www.youtube.com/c/gdquest/\n")
      pandoc
+     (elfeed :variables
+             rmh-elfeed-org-files (list "~/.emacs.d/private/rss-feeds.org"))
      (ranger :variables
               ranger-show-preview t
               ranger-enter-with-minus t
               ranger-show-hidden t)
      markdown
-     org
+     (org :variables
+          org-want-todo-bindings t)
+
      (python :variables python-backend 'lsp)
      lsp
      yaml
@@ -171,6 +210,14 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   This is the place where most of your configurations should be done. Unless it is
   explicitly specified that a variable should be set before a package is loaded,
   you should place your code here."
+  ;; C#
+  (add-hook 'csharp-mode-hook 'omnisharp-mode)
+  (eval-after-load
+      'company
+    '(add-to-list 'company-backends 'company-omnisharp))
+  (add-hook 'csharp-mode-hook #'company-mode)
+  (setq omnisharp-server-executable-path "/home/gdquest/Applications/omnisharp/run")
+
   (setq company-show-numbers t)
   (setq flycheck-check-syntax-automatically '(mode-enabled save))
 
@@ -202,14 +249,16 @@ This function is called at the very end of Spacemacs initialization."
  '(evil-want-Y-yank-to-eol nil)
  '(org-agenda-files
    (quote
-    ("~/Dropbox/org/open-source.org" "~/Dropbox/org/appointments.org" "~/Dropbox/org/kickstarter.org" "~/Dropbox/org/todo.org")))
+    ("~/Dropbox/org/2.godot-course-2019.org" "~/Dropbox/org/5.open-source.org" "~/Dropbox/org/3.appointments.org" "~/Dropbox/org/1.todo.org")))
  '(package-selected-packages
    (quote
-    (gdscript-mode treemacs-evil lsp-ui doom-modeline lsp-mode counsel ivy magit transient lv pythonic all-the-icons treemacs yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile toml-mode toc-org tagedit symon swiper string-inflection spaceline-all-the-icons smeargle slim-mode shrink-path shell-pop scss-mode sass-mode restart-emacs ranger rainbow-mode rainbow-identifiers rainbow-delimiters racer pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pippel pipenv pip-requirements pfuture persp-mode pcre2el password-generator paradox pandoc-mode ox-pandoc overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless multi-term move-text mmm-mode markdown-toc magithub magit-svn magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy forge font-lock+ flyspell-popup flyspell-correct-helm flycheck-rust flycheck-pos-tip flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emojify emoji-cheat-sheet-plus emmet-mode elisp-slime-nav eldoc-eval editorconfig dumb-jump dotenv-mode diminish diff-hl define-word cython-mode csv-mode counsel-projectile company-web company-tern company-statistics company-shell company-quickhelp company-lsp company-emoji company-anaconda column-enforce-mode color-identifiers-mode clean-aindent-mode centered-cursor-mode cargo browse-at-remote auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (mu4e-maildirs-extension mu4e-alert helm-mu dracula-theme gdscript-mode treemacs-evil lsp-ui doom-modeline lsp-mode counsel ivy magit transient lv pythonic all-the-icons treemacs yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile toml-mode toc-org tagedit symon swiper string-inflection spaceline-all-the-icons smeargle slim-mode shrink-path shell-pop scss-mode sass-mode restart-emacs ranger rainbow-mode rainbow-identifiers rainbow-delimiters racer pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pippel pipenv pip-requirements pfuture persp-mode pcre2el password-generator paradox pandoc-mode ox-pandoc overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless multi-term move-text mmm-mode markdown-toc magithub magit-svn magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy forge font-lock+ flyspell-popup flyspell-correct-helm flycheck-rust flycheck-pos-tip flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emojify emoji-cheat-sheet-plus emmet-mode elisp-slime-nav eldoc-eval editorconfig dumb-jump dotenv-mode diminish diff-hl define-word cython-mode csv-mode counsel-projectile company-web company-tern company-statistics company-shell company-quickhelp company-lsp company-emoji company-anaconda column-enforce-mode color-identifiers-mode clean-aindent-mode centered-cursor-mode cargo browse-at-remote auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
 )
