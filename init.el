@@ -12,7 +12,6 @@
    dotspacemacs-configuration-layer-path '()
    dotspacemacs-configuration-layers
    '(rust
-     csharp
      javascript
      csv
      emacs-lisp
@@ -22,8 +21,9 @@
      helm
      html
      (mu4e :variables
-
            ;; Base config
+           mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e/"
+
            mu4e-get-mail-command "offlineimap -q"
            mu4e-update-interval 28800
            mu4e-confirm-quit nil
@@ -42,9 +42,12 @@
            ;; Mail folders
            mu4e-sent-folder "/INBOX.Sent"
            mu4e-trash-folder "/INBOX.Trash"
-           mu4e-refile-folder "/INBOX.Archive"
+           mu4e-refile-folder "/INBOX.Archives"
            mu4e-drafts-folder "/INBOX.Drafts"
            mu4e-attachment-dir "~/Downloads"
+
+           mu4e-use-fancy-chars t
+           mu4e-use-maildirs-extension t
 
            ;; User config
            ;; Not using a context at the moment
@@ -64,9 +67,15 @@
              ranger-show-hidden t)
      markdown
      (org :variables
-          org-want-todo-bindings t)
+          org-want-todo-bindings t
+          org-enable-reveal-js-support t
+          org-re-reveal-root "file:///home/gdquest/Applications/reveal.js-3.8.0/")
+     spacemacs-org
 
-     (python :variables python-backend 'lsp)
+     (python :variables
+             python-backend 'anaconda
+             python-shell-interpreter "python3"
+             flycheck-python-pycompile-executable "python3")
      lsp
      yaml
      (auto-completion :variables
@@ -75,8 +84,7 @@
                       auto-completion-idle-delay 0.05
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-snippets-in-popup t
-                      auto-completion-enable-sort-by-usage t
-                      auto-completion-complete-with-key-sequence nil)
+                      auto-completion-enable-sort-by-usage t)
      (colors :variables
              colors-colorize-identifiers 'variables)
      shell-scripts
@@ -91,7 +99,11 @@
      (syntax-checking :variables
                       syntax-checking-enable-by-default t)
      )
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(evil-mu4e
+                                      auto-dim-other-buffers
+                                      ggtags
+                                      (godot-gdscript :location local)
+                                      anki-editor)
    dotspacemacs-frozen-packages '()
    dotspacemacs-excluded-packages '()
    dotspacemacs-install-packages 'used-only))
@@ -103,10 +115,24 @@
   You should not put any user code in there besides modifying the variable
   values."
   (setq-default
+   dotspacemacs-enable-emacs-pdumper nil
+
+   dotspacemacs-emacs-pdumper-executable-file "emacs-27.0.50"
+
+   dotspacemacs-emacs-dumper-dump-file "spacemacs.pdmp"
+
    dotspacemacs-elpa-https t
    dotspacemacs-elpa-timeout 5
+
+   dotspacemacs-gc-cons '(100000000 0.1)
+
+   dotspacemacs-use-spacelpa nil
+   dotspacemacs-verify-spacelpa-archives nil
+
    dotspacemacs-check-for-update nil
-   dotspacemacs-elpa-subdirectory nil
+
+   dotspacemacs-elpa-subdirectory 'emacs-version
+
    dotspacemacs-editing-style 'vim
    dotspacemacs-verbose-loading nil
    dotspacemacs-startup-banner 'nil
@@ -114,12 +140,14 @@
                                 (todos . 5)
                                 (projects . 5))
    dotspacemacs-startup-buffer-responsive t
-   dotspacemacs-scratch-mode 'org-mode
-   dotspacemacs-themes '(spacemacs-dark
+   dotspacemacs-scratch-mode 'markdown-mode
+   dotspacemacs-themes '(dracula
+                         spacemacs-dark
                          spacemacs-light)
+   dotspacemacs-mode-line-theme 'spacemacs
    dotspacemacs-colorize-cursor-according-to-state t
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 22
+                               :size 24
                                :weight normal
                                :width normal)
 
@@ -135,7 +163,6 @@
    dotspacemacs-display-default-layout nil
    dotspacemacs-auto-resume-layouts nil
    dotspacemacs-large-file-size 1
-
    dotspacemacs-auto-save-file-location 'cache
    dotspacemacs-max-rollback-slots 5
 
@@ -146,62 +173,7 @@
 
    dotspacemacs-switch-to-buffer-prefers-purpose nil
 
-   dotspacemacs-loading-progress-bar nil
-   dotspacemacs-fullscreen-at-startup t
-
-   dotspacemacs-fullscreen-use-non-native nil
-   dotspacemacs-maximized-at-startup t
-
-   dotspacemacs-active-transparency 90
-   dotspacemacs-inactive-transparency 90
-
-   dotspacemacs-show-transient-state-title t
-   dotspacemacs-show-transient-state-color-guide t
-   dotspacemacs-mode-line-unicode-symbols t
-   dotspacemacs-mode-line-theme 'spacemacs
-
-   dotspacemacs-smooth-scrolling t
-
-   dotspacemacs-line-numbers '(:relative t
-                                         :disabled-for-modes dired-mode
-                                         doc-view-mode
-                                         pdf-view-mode
-                                         text-mode
-                                         :size-limit-kb 1000)
-
-
-   dotspacemacs-folding-method 'evil
-
-   dotspacemacs-smartparens-strict-mode t
-
-   dotspacemacs-highlight-delimiters 'all
-   dotspacemacs-persistent-server t
-   dotspacemacs-search-tools '("rg" "ag" "pt" "ack" "grep")
-
-   dotspacemacs-frame-title-format "%I@%S"
-   dotspacemacs-icon-title-format nil
-
-   dotspacemacs-whitespace-cleanup 'trailing
-
-   dotspacemacs-zone-out-when-idle nil
-
-   dotspacemacs-pretty-docs nil))
-
-(defun dotspacemacs/user-env ()
-  "Environment variables setup.
-  This function defines the environment variables for your Emacs session. By
-  default it calls `spacemacs/load-spacemacs-env' which loads the environment
-  variables declared in `~/.spacemacs.env' or `~/.spacemacs.d/.spacemacs.env'.
-  See the header of this file for more information."
-  (spacemacs/load-spacemacs-env))
-
-(defun dotspacemacs/user-init ()
-  "Initialization for user code:
-  This function is called immediately after `dotspacemacs/init', before layer
-  configuration.
-  It is mostly for variables that should be set before packages are loaded.
-  If you are unsure, try setting them in `dotspacemacs/user-config' first."
-  )
+   dotspacemacs-loading-progress-bar nil))
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -210,18 +182,16 @@
   This is the place where most of your configurations should be done. Unless it is
   explicitly specified that a variable should be set before a package is loaded,
   you should place your code here."
-  ;; C#
-  (add-hook 'csharp-mode-hook 'omnisharp-mode)
-  (eval-after-load
-      'company
-    '(add-to-list 'company-backends 'company-omnisharp))
-  (add-hook 'csharp-mode-hook #'company-mode)
-  (setq omnisharp-server-executable-path "/home/gdquest/Applications/omnisharp/run")
+  (setq-default dotspacemacs-line-numbers 'relative)
+
+  (require 'godot-gdscript "/home/gdquest/.emacs.d/private/local/godot-gdscript.el")
 
   (setq company-show-numbers t)
   (setq flycheck-check-syntax-automatically '(mode-enabled save))
 
   ;; Org mode settings
+  (setq org-directory "~/Dropbox/org/")
+  (setq org-default-notes-file (concat org-directory "1.todo.org"))
   (setq org-agenda-files
         (quote
          ("~/Dropbox/org/7.company.org"
@@ -231,28 +201,61 @@
           "~/Dropbox/org/3.appointments.org"
           "~/Dropbox/org/2.godot-course-2019.org"
           "~/Dropbox/org/1.todo.org")))
-  (setq org-todo-keywords
-        '((sequence "TODO" "PROGRESS" "NEXT" "|" "DONE" "DELEGATED" "CANCELLED")))
-  (setq org-support-shift-select t)
+  (setq org-todo-keywords '((sequence "TODO" "PROGRESS" "|" "DONE" "DELEGATED" "CANCELLED")))
+  ;; FIXME: toggle autocomplete off for org mode as it gets in the way
+  ;; (add-hook 'org-mode-hook 'spacemacs/toggle-auto-completion-off)
 
   (custom-set-faces
-   '(company-tooltip-common
-     ((t (:inherit company-tooltip :weight bold :underline nil))))
-   '(company-tooltip-common-selection
-     ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+   '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+   '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
   )
 
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.
-  This is an auto-generated function, do not modify its content directly, use
-  Emacs customize menu instead.
-  This function is called at the very end of Spacemacs initialization."
-  (custom-set-variables
-   ;; custom-set-variables was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   '(evil-want-Y-yank-to-eol nil)
-   '(package-selected-packages
-     (quote
-      (mu4e-maildirs-extension mu4e-alert helm-mu dracula-theme gdscript-mode treemacs-evil lsp-ui doom-modeline lsp-mode counsel ivy magit transient lv pythonic all-the-icons treemacs yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile toml-mode toc-org tagedit symon swiper string-inflection spaceline-all-the-icons smeargle slim-mode shrink-path shell-pop scss-mode sass-mode restart-emacs ranger rainbow-mode rainbow-identifiers rainbow-delimiters racer pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pippel pipenv pip-requirements pfuture persp-mode pcre2el password-generator paradox pandoc-mode ox-pandoc overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nameless multi-term move-text mmm-mode markdown-toc magithub magit-svn magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-navigator json-mode js2-refactor js-doc insert-shebang indent-guide importmagic impatient-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy forge font-lock+ flyspell-popup flyspell-correct-helm flycheck-rust flycheck-pos-tip flycheck-bashate flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emojify emoji-cheat-sheet-plus emmet-mode elisp-slime-nav eldoc-eval editorconfig dumb-jump dotenv-mode diminish diff-hl define-word cython-mode csv-mode counsel-projectile company-web company-tern company-statistics company-shell company-quickhelp company-lsp company-emoji company-anaconda column-enforce-mode color-identifiers-mode clean-aindent-mode centered-cursor-mode cargo browse-at-remote auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell)))))
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#e090d7" "#8cc4ff" "#eeeeec"])
+ '(auto-dim-other-buffers-mode nil)
+ '(evil-want-Y-yank-to-eol nil)
+ '(hl-todo-keyword-faces
+   (quote
+    (("TODO" . "#dc752f")
+     ("NEXT" . "#dc752f")
+     ("PROGRESS" . "#4f97d7")
+     ("OKAY" . "#4f97d7")
+     ("DONT" . "#f2241f")
+     ("FAIL" . "#f2241f")
+     ("DONE" . "#86dc2f")
+     ("NOTE" . "#b1951d")
+     ("HACK" . "#b1951d")
+     ("TEMP" . "#b1951d")
+     ("FIXME" . "#dc752f"))))
+ '(org-agenda-files
+   (quote
+    ("~/Dropbox/org/tutorial.org" "~/Dropbox/org/7.company.org" "~/Dropbox/org/6.notes.org" "~/Dropbox/org/5.open-source.org" "~/Dropbox/org/4.ideas.org" "~/Dropbox/org/3.appointments.org" "~/Dropbox/org/2.godot-course-2019.org" "~/Dropbox/org/1.todo.org")))
+ '(package-selected-packages
+   (quote
+    (lsp-ui lsp-treemacs helm-lsp company-lsp lsp-mode anki-editor ggtags blacken auto-dim-other-buffers evil-mu4e dracula-theme ac-ispell)))
+ '(paradox-github-token t)
+ '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
+ '(projectile-globally-ignored-directories
+   (quote
+    (".idea" ".ensime_cache" ".eunit" ".git" ".hg" ".fslckout" "_FOSSIL_" ".bzr" "_darcs" ".tox" ".svn" ".stack-work")))
+ '(projectile-tags-backend (quote find-tag))
+ '(projectile-tags-command "ctags-exuberant -Re -f \"%s\" %s \"%s\""))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(auto-dim-other-buffers-face ((t (:background "#16171e"))))
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+)
