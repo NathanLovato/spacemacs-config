@@ -50,44 +50,6 @@ This function should only modify configuration layer settings."
      github
      helm
      html
-     (mu4e :variables
-           ;; Base config
-           mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e/"
-
-           mu4e-get-mail-command "offlineimap -q"
-           mu4e-update-interval 28800
-           mu4e-confirm-quit nil
-           mu4e-view-show-images t
-           mu4e-view-show-addresses t
-           mu4e-compose-signature-auto-include t
-
-           ;; Sending email
-           send-mail-function 'smtpmail-send-it
-           message-send-mail-function 'smtpmail-send-it
-           smtpmail-default-smtp-server "SSL0.OVH.NET"
-           smtpmail-smtp-server "SSL0.OVH.NET"
-           smtpmail-stream-type 'ssl
-           smtpmail-smtp-service 465
-
-           ;; Mail folders
-           mu4e-sent-folder "/INBOX.Sent"
-           mu4e-trash-folder "/INBOX.Trash"
-           mu4e-refile-folder "/INBOX.Archives"
-           mu4e-drafts-folder "/INBOX.Drafts"
-           mu4e-attachment-dir "~/Downloads"
-
-           mu4e-use-fancy-chars t
-           mu4e-use-maildirs-extension t
-
-           ;; User config
-           ;; Not using a context at the moment
-           mu4e-user-mail-address-list '("nathan@gdquest.com" "natlovato@orange.fr")
-           mu4e-reply-to-address "nathan@gdquest.com"
-           user-mail-address "nathan@gdquest.com"
-           smtpmail-smtp-user "nathan@gdquest.com"
-           user-full-name  "Nathan GDquest"
-           mu4e-compose-signature
-           "Nathan\nhttps://www.youtube.com/c/gdquest/\n")
      pandoc
      (elfeed :variables
              rmh-elfeed-org-files (list "~/.emacs.d/private/rss-feeds.org"))
@@ -141,7 +103,7 @@ This function should only modify configuration layer settings."
      (rcirc :variables
             rcirc-enable-authinfo-support t)
      )
-   dotspacemacs-additional-packages '(evil-mu4e
+   dotspacemacs-additional-packages '(
                                       auto-dim-other-buffers
                                       (godot-gdscript :location local)
                                       anki-editor)
@@ -535,22 +497,6 @@ It should only modify the values of Spacemacs settings."
   (setq company-show-numbers t)
   (setq flycheck-check-syntax-automatically '(mode-enabled save))
 
-  ;; mu4e configuration
-  (add-hook 'mu4e-view-mode-hook
-            (lambda()
-              ;; try to emulate some of the eww key-bindings
-              (local-set-key (kbd "<tab>") 'shr-next-link)
-              (local-set-key (kbd "<backtab>") 'shr-previous-link)))
-  (defun my-mu4e-html2text (msg)
-    "View the message in an external browser if it's over 20k characters long, otherwise convert to text"
-    (let ((html (or (mu4e-message-field msg :body-html) "")))
-      (if (> (length html) 20000)
-          (progn
-            (mu4e-action-view-in-browser msg)
-            "[Viewing message in external browser]")
-        (mu4e-shr2text msg))))
-  (setq mu4e-html2text-command 'my-mu4e-html2text)
-
   ;; Org mode settings
   (setq org-directory "~/Dropbox/org/")
   (setq org-default-notes-file (concat org-directory "1.todo.org"))
@@ -616,7 +562,7 @@ This function is called at the very end of Spacemacs initialization."
     ("~/Dropbox/org/7.company.org" "~/Dropbox/org/6.notes.org" "~/Dropbox/org/5.open-source.org" "~/Dropbox/org/4.ideas.org" "~/Dropbox/org/3.appointments.org" "~/Dropbox/org/2.godot-course-2019.org" "~/Dropbox/org/1.todo.org")))
  '(package-selected-packages
    (quote
-    (org-journal rcirc-notify rcirc-color glsl-mode lsp-ui lsp-treemacs helm-lsp company-lsp lsp-mode anki-editor ggtags blacken auto-dim-other-buffers evil-mu4e dracula-theme ac-ispell)))
+    (org-journal rcirc-notify rcirc-color glsl-mode lsp-ui lsp-treemacs helm-lsp company-lsp lsp-mode anki-editor ggtags blacken auto-dim-other-buffers dracula-theme ac-ispell)))
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(projectile-globally-ignored-directories
