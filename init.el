@@ -41,25 +41,35 @@ This function should only modify configuration layer settings."
      ;; ----------------------------------------------------------------
      ;; auto-completion
      ;; better-defaults
-     rust
+
+     ;; Languages
+     html
      javascript
-     csv
+     c-c++
      emacs-lisp
-     emoji
+     rust
+     (python :variables
+             python-backend 'anaconda
+             python-shell-interpreter "python3"
+             flycheck-python-pycompile-executable "python3")
+     yaml
+     shell-scripts
+     markdown
+     restructuredtext
+     csv
+
+     ;; VCS
      git
      github
-     helm
-     html
+
+     ;; Tools
+     sphinx
      pandoc
-     (elfeed :variables
-             rmh-elfeed-org-files (list "~/.emacs.d/private/rss-feeds.org"))
      (ranger :variables
              ranger-show-preview t
              ranger-enter-with-minus t
              ranger-show-hidden t)
-     markdown
-     restructuredtext
-     sphinx
+     vinegar
      (org :variables
           org-want-todo-bindings t
           org-enable-reveal-js-support t
@@ -69,17 +79,22 @@ This function should only modify configuration layer settings."
           org-journal-file-format "%Y-%m"
           org-journal-file-type 'monthly)
      spacemacs-org
+     (shell :variables
+            shell-default-height 50
+            shell-default-position 'bottom
+            shell-default-shell 'ansi-term)
+     (spell-checking)
+     (syntax-checking :variables
+                      syntax-checking-enable-by-default t)
+     (colors :variables
+             colors-colorize-identifiers 'variables)
+     emoji
 
-     gtags
-     vinegar
-
-     (python :variables
-             python-backend 'anaconda
-             python-shell-interpreter "python3"
-             flycheck-python-pycompile-executable "python3")
+     ;; Completion
      lsp
-     dash
-     yaml
+     gtags
+     dash ;; open and search docs with Zeal
+     helm
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
                       auto-completion-tab-key-behavior 'complete
@@ -87,26 +102,18 @@ This function should only modify configuration layer settings."
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-enable-sort-by-usage t)
-     (colors :variables
-             colors-colorize-identifiers 'variables)
-     shell-scripts
-     (shell :variables
-            shell-default-height 50
-            shell-default-position 'bottom
-            shell-default-shell 'ansi-term)
-     (spell-checking :variables
-                     spell-checking-enable-auto-dictionary t
-                     enable-flyspell-auto-completion t
-                     spell-checking-enable-by-default nil)
-     (syntax-checking :variables
-                      syntax-checking-enable-by-default t)
+
+     ;; social
+     (elfeed :variables
+             rmh-elfeed-org-files (list "~/.emacs.d/private/rss-feeds.org"))
      (rcirc :variables
             rcirc-enable-authinfo-support t)
      )
-   dotspacemacs-additional-packages '(
-                                      auto-dim-other-buffers
+
+   dotspacemacs-additional-packages '(auto-dim-other-buffers
                                       (godot-gdscript :location local)
                                       anki-editor)
+
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
