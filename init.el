@@ -105,8 +105,6 @@ This function should only modify configuration layer settings."
      ;; social
      (elfeed :variables
              rmh-elfeed-org-files (list "~/.emacs.d/private/rss-feeds.org"))
-     (rcirc :variables
-            rcirc-enable-authinfo-support t)
      )
 
    dotspacemacs-additional-packages '(auto-dim-other-buffers
@@ -520,11 +518,6 @@ It should only modify the values of Spacemacs settings."
   (custom-set-faces
    '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
    '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
-
-  (setq rcirc-server-alist
-        '(("irc.freenode.net"
-           :nick "gdquest"
-           :channels ("#krita" "godotengine"))))
 
   ;; Major mode associations
   (add-to-list 'auto-mode-alist '("\\.tscn\\'" . toml-mode))
