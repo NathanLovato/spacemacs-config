@@ -49,9 +49,8 @@ This function should only modify configuration layer settings."
      emacs-lisp
      rust
      (python :variables
-             python-backend 'anaconda
-             python-shell-interpreter "python3"
-             flycheck-python-pycompile-executable "python3")
+             python-backend 'lsp
+             python-fill-column 99)
      yaml
      shell-scripts
      markdown
