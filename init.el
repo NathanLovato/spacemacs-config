@@ -288,7 +288,7 @@ It should only modify the values of Spacemacs settings."
    ;; and TAB or `C-m' and `RET'.
    ;; In the terminal, these pairs are generally indistinguishable, so this only
    ;; works in the GUI. (default nil)
-   dotspacemacs-distinguish-gui-tab nil
+   dotspacemacs-distinguish-gui-tab t
 
    ;; Name of the default layout (default "Default")
    dotspacemacs-default-layout-name "Default"
@@ -521,6 +521,7 @@ It should only modify the values of Spacemacs settings."
 
   ;; Major mode associations
   (add-to-list 'auto-mode-alist '("\\.tscn\\'" . toml-mode))
+  (setq spacemacs-large-file-modes-list '(archive-mode tar-mode jka-compr git-commit-mode image-mode doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode fundamental-mode ggtags-mode helm-gtags-mode tags-table-mode))
 
   ;; KEYBOARD MAPPINGS
   ;; Avy jump
@@ -561,14 +562,15 @@ This function is called at the very end of Spacemacs initialization."
     ("~/Dropbox/org/7.company.org" "~/Dropbox/org/6.notes.org" "~/Dropbox/org/5.open-source.org" "~/Dropbox/org/4.ideas.org" "~/Dropbox/org/3.appointments.org" "~/Dropbox/org/2.godot-course-2019.org" "~/Dropbox/org/1.todo.org")))
  '(package-selected-packages
    (quote
-    (org-journal rcirc-notify rcirc-color glsl-mode lsp-ui lsp-treemacs helm-lsp company-lsp lsp-mode anki-editor ggtags blacken auto-dim-other-buffers dracula-theme ac-ispell)))
+    (lsp-python mmm-mode csv-mode org-journal rcirc-notify rcirc-color glsl-mode lsp-ui lsp-treemacs helm-lsp company-lsp lsp-mode anki-editor ggtags blacken auto-dim-other-buffers dracula-theme ac-ispell)))
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(projectile-globally-ignored-directories
    (quote
     (".idea" ".ensime_cache" ".eunit" ".git" ".hg" ".fslckout" "_FOSSIL_" ".bzr" "_darcs" ".tox" ".svn" ".stack-work")))
- '(projectile-tags-backend (quote find-tag))
- '(projectile-tags-command "ctags-exuberant -Re -f \"%s\" %s \"%s\""))
+ '(projectile-tags-backend (quote ggtags))
+ '(projectile-tags-command "gtags")
+ '(projectile-tags-file-name "GTAGS"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
