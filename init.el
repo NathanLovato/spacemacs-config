@@ -50,6 +50,8 @@ This function should only modify configuration layer settings."
      rust
      (python :variables
              python-backend 'lsp
+             python-format-on-save nil
+             python-formatter 'black
              python-fill-column 99)
      yaml
      shell-scripts
@@ -111,6 +113,7 @@ This function should only modify configuration layer settings."
                                       (godot-gdscript :location local)
                                       anki-editor)
 
+   ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
@@ -139,10 +142,10 @@ It should only modify the values of Spacemacs settings."
    ;; (default nil)
    dotspacemacs-enable-emacs-pdumper nil
 
-   ;; File path pointing to emacs 27.1 executable compiled with support
-   ;; for the portable dumper (this is currently the branch pdumper).
-   ;; (default "emacs-27.0.50")
-   dotspacemacs-emacs-pdumper-executable-file "emacs-27.0.50"
+   ;; Name of executable file pointing to emacs 27+. This executable must be
+   ;; in your PATH.
+   ;; (default "emacs")
+   dotspacemacs-emacs-pdumper-executable-file "emacs"
 
    ;; Name of the Spacemacs dump file. This is the file will be created by the
    ;; portable dumper in the cache directory under dumps sub-directory.
@@ -176,8 +179,8 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-use-spacelpa nil
 
    ;; If non-nil then verify the signature for downloaded Spacelpa archives.
-   ;; (default nil)
-   dotspacemacs-verify-spacelpa-archives nil
+   ;; (default t)
+   dotspacemacs-verify-spacelpa-archives t
 
    ;; If non-nil then spacemacs will check for updates at startup
    ;; when the current branch is not `develop'. Note that checking for
@@ -197,9 +200,6 @@ It should only modify the values of Spacemacs settings."
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
    dotspacemacs-editing-style 'vim
-
-   ;; If non-nil output loading progress in `*Messages*' buffer. (default nil)
-   dotspacemacs-verbose-loading nil
 
    ;; Specify the startup banner. Default value is `official', it displays
    ;; the official spacemacs logo. An integer value is the index of text
@@ -420,7 +420,7 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-smartparens-strict-mode nil
 
    ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
-   ;; over any automatically added closing parenthesis, bracket, quote, etc…
+   ;; over any automatically added closing parenthesis, bracket, quote, etc...
    ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
    dotspacemacs-smart-closing-parenthesis nil
 
@@ -523,11 +523,37 @@ It should only modify the values of Spacemacs settings."
   (add-to-list 'auto-mode-alist '("\\.tscn\\'" . toml-mode))
   (setq spacemacs-large-file-modes-list '(archive-mode tar-mode jka-compr git-commit-mode image-mode doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode fundamental-mode ggtags-mode helm-gtags-mode tags-table-mode))
 
+  ;; Evil operators
+  (evil-define-operator my/evil-replace-with-kill-ring (beg end)
+    "Replace text object with killring without changing the clipboard."
+    :move-point nil
+    (interactive "<r>")
+    (save-excursion
+      (delete-region beg end)
+      (goto-char beg)
+      (call-interactively 'evil-paste-before 1)))
+
+  (evil-define-text-object my/function-text-object (count)
+    "Text object for functions"
+    (interactive)
+    (save-mark-and-excursion
+      (mark-defun)
+      (let ((m (mark)))
+        (if (looking-back "*/\n")
+            (progn
+              (previous-line)
+              (list m (first (sp-get-comment-bounds))))
+          (list m (point))))))
+
   ;; KEYBOARD MAPPINGS
   ;; Avy jump
   (define-key evil-normal-state-map (kbd "M-s") #'avy-goto-char-timer)
   (define-key evil-normal-state-map (kbd "M-w") #'avy-goto-word-1)
   (define-key evil-motion-state-map (kbd "M-w") #'avy-goto-word-1)
+
+  (define-key evil-normal-state-map "go" 'my/evil-replace-with-kill-ring)
+  (define-key evil-inner-text-objects-map "d" 'my/function-text-object)
+  (define-key evil-outer-text-objects-map "d" 'my/function-text-object)
   )
 
 (defun dotspacemacs/emacs-custom-settings ()
