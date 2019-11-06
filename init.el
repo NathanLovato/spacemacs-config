@@ -492,9 +492,33 @@ It should only modify the values of Spacemacs settings."
   you should place your code here."
 
   (require 'godot-gdscript "/home/gdquest/.emacs.d/private/local/godot-gdscript.el")
+  (require 'beacon)
 
-  (setq company-show-numbers t)
-  (setq flycheck-check-syntax-automatically '(mode-enabled save))
+  ;; Appointments and notifications
+  (require 'notifications)
+  (require 'appt)
+  (defun appt-agenda-notify (minutes-to-appt time-current message)
+    "Display a notification before scheduled events registered in org-agenda"
+    (notifications-notify :title "Appointment"
+                          :body (format "In %s minutes:" minutes-to-appt) message
+                          :app-name "Emacs: Org"
+                          :urgency "normal"
+                          :sound-name "alarm-clock-elapsed")
+    )
+  (setq appt-message-warning-time 15
+        appt-display-mode-line t
+        appt-display-format 'window
+        appt-disp-window-function (function appt-agenda-notify))
+
+  ;; Update appointments automatically
+  (org-agenda-to-appt)
+  (run-at-time "12:00am" (* 24 3600) 'org-agenda-to-appt)
+  (add-hook 'after-save-hook
+            '(lambda ()
+               (if (seq-contains (org-agenda-files) (buffer-file-name))
+                   (org-agenda-to-appt))))
+  (appt-activate 1)
+  (display-time)
 
   ;; Org mode settings
   (setq org-directory "~/Dropbox/org/")
