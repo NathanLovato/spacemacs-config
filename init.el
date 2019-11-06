@@ -76,8 +76,6 @@ This function should only modify configuration layer settings."
 
      (org :variables
           org-want-todo-bindings t
-          org-enable-reveal-js-support t
-          org-re-reveal-root "file:///home/gdquest/Applications/reveal.js-3.8.0/"
           org-enable-org-journal-support t
           org-journal-dir "~/Dropbox/org/journal/"
           org-journal-file-format "%Y-%m"
