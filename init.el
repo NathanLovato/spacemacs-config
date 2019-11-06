@@ -26,30 +26,27 @@ This function should only modify configuration layer settings."
    ;; a layer lazily. (default t)
    dotspacemacs-ask-for-lazy-installation t
 
-   ;; If non-nil layers with lazy install support are lazy installed.
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
    dotspacemacs-configuration-layer-path '()
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(typescript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     ;; auto-completion
-     ;; better-defaults
 
      ;; Languages
      html
-     javascript
+     ;; (javascript :variables javascript-backend 'lsp)
      lsp
      c-c++
      cmake
      emacs-lisp
-     rust
+     ;; rust
      (python :variables
              python-backend 'lsp
              python-format-on-save nil
@@ -59,7 +56,7 @@ This function should only modify configuration layer settings."
      shell-scripts
      markdown
      restructuredtext
-     csv
+     ;; csv
 
      ;; VCS
      git
@@ -101,19 +98,15 @@ This function should only modify configuration layer settings."
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
                       auto-completion-tab-key-behavior 'complete
-                      auto-completion-idle-delay 0.05
+                      auto-completion-idle-delay 0.1
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-enable-sort-by-usage t)
-
-     ;; social
-     (elfeed :variables
-             rmh-elfeed-org-files (list "~/.emacs.d/private/rss-feeds.org"))
      )
 
    dotspacemacs-additional-packages '(auto-dim-other-buffers
                                       (godot-gdscript :location local)
-                                      anki-editor)
+                                      beacon)
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
