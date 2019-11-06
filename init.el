@@ -81,11 +81,10 @@ This function should only modify configuration layer settings."
           org-journal-file-format "%Y-%m"
           org-journal-file-type 'monthly)
      spacemacs-org
-     (shell :variables
-            shell-default-height 50
-            shell-default-position 'bottom
-            shell-default-shell 'ansi-term)
-     (spell-checking)
+     ;; (shell :variables
+     ;;        shell-default-height 50
+     ;;        shell-default-position 'bottom
+     ;;        shell-default-shell 'ansi-term)
      (spell-checking :variables
                      spell-checking-enable-by-default nil
                      enable-flyspell-auto-completion t)
