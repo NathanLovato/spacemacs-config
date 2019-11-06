@@ -521,18 +521,12 @@ It should only modify the values of Spacemacs settings."
   (display-time)
 
   ;; Org mode settings
-  (setq org-directory "~/Dropbox/org/")
-  (setq org-default-notes-file (concat org-directory "1.todo.org"))
-  (setq org-agenda-files
-        (quote
-         ("~/Dropbox/org/7.company.org"
-          "~/Dropbox/org/6.notes.org"
-          "~/Dropbox/org/5.open-source.org"
-          "~/Dropbox/org/4.ideas.org"
-          "~/Dropbox/org/3.appointments.org"
-          "~/Dropbox/org/2.godot-course-2019.org"
-          "~/Dropbox/org/1.todo.org")))
+  (setq org-directory "/home/gdquest/Dropbox/org/")
+  (setq org-default-notes-file (concat org-directory "tasks.org"))
   (setq org-todo-keywords '((sequence "TODO" "PROGRESS" "|" "DONE" "DELEGATED" "CANCELLED")))
+  (setq org-refile-targets
+        '((nil :maxlevel . 1)
+          (org-agenda-files :maxlevel . 1)))
 
   (custom-set-faces
    '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
@@ -604,7 +598,7 @@ This function is called at the very end of Spacemacs initialization."
      ("FIXME" . "#dc752f"))))
  '(org-agenda-files
    (quote
-    ("~/Dropbox/org/7.company.org" "~/Dropbox/org/6.notes.org" "~/Dropbox/org/5.open-source.org" "~/Dropbox/org/4.ideas.org" "~/Dropbox/org/3.appointments.org" "~/Dropbox/org/2.godot-course-2019.org" "~/Dropbox/org/1.todo.org")))
+    ("/home/gdquest/Dropbox/org/projects/gdquest.org" "/home/gdquest/Dropbox/org/projects/kickstarter-2019.org" "/home/gdquest/Dropbox/org/calendar.org" "/home/gdquest/Dropbox/org/tasks.org" "/home/gdquest/Dropbox/org/routine.org")))
  '(package-selected-packages
    (quote
     (lsp-python mmm-mode csv-mode org-journal rcirc-notify rcirc-color glsl-mode lsp-ui lsp-treemacs helm-lsp company-lsp lsp-mode anki-editor ggtags blacken auto-dim-other-buffers dracula-theme ac-ispell)))
