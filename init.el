@@ -601,14 +601,13 @@ This function is called at the very end of Spacemacs initialization."
     ("/home/gdquest/Dropbox/org/projects/gdquest.org" "/home/gdquest/Dropbox/org/projects/kickstarter-2019.org" "/home/gdquest/Dropbox/org/calendar.org" "/home/gdquest/Dropbox/org/tasks.org" "/home/gdquest/Dropbox/org/routine.org")))
  '(package-selected-packages
    (quote
-    (lsp-python mmm-mode csv-mode org-journal rcirc-notify rcirc-color glsl-mode lsp-ui lsp-treemacs helm-lsp company-lsp lsp-mode anki-editor ggtags blacken auto-dim-other-buffers dracula-theme ac-ispell)))
+    (utop tuareg caml seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocopfmt rubocop rspec-mode robe rbenv rake ocp-indent ob-elixir mvn minitest meghanada maven-test-mode lsp-java groovy-mode groovy-imports pcache gradle-mode git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter flycheck-ocaml merlin flycheck-mix flycheck-credo dune diff-hl chruby bundler inf-ruby browse-at-remote alchemist elixir-mode nodejs-repl livid-mode skewer-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern tern tide typescript-mode import-js grizzl add-node-modules-path web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd helm-css-scss haml-mode emmet-mode company-web web-completion-data pandoc-mode ox-pandoc auto-complete-rst ranger gnu-elpa-keyring-update python helm-ctest cmake-mode cmake-ide levenshtein flyspell-popup beacon company-box lsp-python mmm-mode csv-mode org-journal rcirc-notify rcirc-color glsl-mode lsp-ui lsp-treemacs helm-lsp company-lsp lsp-mode anki-editor ggtags blacken auto-dim-other-buffers dracula-theme ac-ispell)))
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(projectile-globally-ignored-directories
    (quote
     (".idea" ".ensime_cache" ".eunit" ".git" ".hg" ".fslckout" "_FOSSIL_" ".bzr" "_darcs" ".tox" ".svn" ".stack-work")))
  '(projectile-tags-backend (quote ggtags))
- '(projectile-tags-command "gtags")
  '(projectile-tags-file-name "GTAGS"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
