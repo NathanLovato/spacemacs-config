@@ -45,7 +45,9 @@ This function should only modify configuration layer settings."
      ;; Languages
      html
      javascript
+     lsp
      c-c++
+     cmake
      emacs-lisp
      rust
      (python :variables
@@ -61,7 +63,6 @@ This function should only modify configuration layer settings."
 
      ;; VCS
      git
-     github
 
      ;; Tools
      sphinx
