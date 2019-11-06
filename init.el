@@ -86,14 +86,16 @@ This function should only modify configuration layer settings."
             shell-default-position 'bottom
             shell-default-shell 'ansi-term)
      (spell-checking)
+     (spell-checking :variables
+                     spell-checking-enable-by-default nil
+                     enable-flyspell-auto-completion t)
      (syntax-checking :variables
-                      syntax-checking-enable-by-default t)
+                      syntax-checking-enable-by-default nil)
      (colors :variables
              colors-colorize-identifiers 'variables)
      emoji
 
      ;; Completion
-     lsp
      gtags
      dash ;; open and search docs with Zeal
      helm
