@@ -69,9 +69,11 @@ This function should only modify configuration layer settings."
      pandoc
      (ranger :variables
              ranger-show-preview t
+             ranger-ignored-extensions '("mkv" "iso" "mp4" "mov" "flv" "avi")
+             ranger-max-preview-size 10
              ranger-enter-with-minus t
-             ranger-show-hidden t)
-     vinegar
+             ranger-show-hidden nil)
+
      (org :variables
           org-want-todo-bindings t
           org-enable-reveal-js-support t
