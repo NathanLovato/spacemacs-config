@@ -528,6 +528,8 @@ It should only modify the values of Spacemacs settings."
         '((nil :maxlevel . 1)
           (org-agenda-files :maxlevel . 1)))
 
+  (setq company-show-numbers t)
+  (setq flycheck-check-syntax-automatically '(new-line save))
   (custom-set-faces
    '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
    '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
