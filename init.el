@@ -32,7 +32,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(typescript
+   '(rust
+     typescript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -42,16 +43,15 @@ This function should only modify configuration layer settings."
      ;; Languages
      html
      ;; (javascript :variables javascript-backend 'lsp)
-     lsp
      c-c++
      cmake
      emacs-lisp
      ;; rust
      (python :variables
-             python-backend 'lsp
              python-format-on-save nil
              python-formatter 'black
-             python-fill-column 99)
+             python-fill-column 88
+             python-shell-interpreter "python3")
      yaml
      shell-scripts
      markdown
@@ -70,6 +70,7 @@ This function should only modify configuration layer settings."
              ranger-max-preview-size 10
              ranger-enter-with-minus t
              ranger-show-hidden nil)
+     treemacs
 
      (org :variables
           org-want-todo-bindings t
@@ -78,10 +79,10 @@ This function should only modify configuration layer settings."
           org-journal-file-format "%Y-%m"
           org-journal-file-type 'monthly)
      spacemacs-org
-     ;; (shell :variables
-     ;;        shell-default-height 50
-     ;;        shell-default-position 'bottom
-     ;;        shell-default-shell 'ansi-term)
+     (shell :variables
+            shell-default-height 50
+            shell-default-position 'bottom
+            shell-default-shell 'eshell)
      (spell-checking :variables
                      spell-checking-enable-by-default nil
                      enable-flyspell-auto-completion t)
@@ -95,10 +96,11 @@ This function should only modify configuration layer settings."
      gtags
      dash ;; open and search docs with Zeal
      helm
+     lsp
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
                       auto-completion-tab-key-behavior 'complete
-                      auto-completion-idle-delay 0.1
+                      auto-completion-idle-delay 0.05
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-enable-sort-by-usage t)
@@ -106,7 +108,8 @@ This function should only modify configuration layer settings."
 
    dotspacemacs-additional-packages '(auto-dim-other-buffers
                                       (godot-gdscript :location local)
-                                      beacon)
+                                      beacon
+                                      company-tabnine)
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -160,7 +163,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; Maximum allowed time in seconds to contact an ELPA repository.
    ;; (default 5)
-   dotspacemacs-elpa-timeout 5
+   dotspacemacs-elpa-timeout 3
 
    ;; Set `gc-cons-threshold' and `gc-cons-percentage' when startup finishes.
    ;; This is an advanced option and should not be changed unless you suspect
@@ -321,7 +324,7 @@ It should only modify the values of Spacemacs settings."
 
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
-   dotspacemacs-which-key-delay 0.15
+   dotspacemacs-which-key-delay 0.1
 
    ;; Which-key frame position. Possible values are `right', `bottom' and
    ;; `right-then-bottom'. right-then-bottom tries to display the frame to the
@@ -491,7 +494,6 @@ It should only modify the values of Spacemacs settings."
   explicitly specified that a variable should be set before a package is loaded,
   you should place your code here."
 
-  (require 'godot-gdscript "/home/gdquest/.emacs.d/private/local/godot-gdscript.el")
   (require 'beacon)
 
   ;; Appointments and notifications
@@ -503,8 +505,7 @@ It should only modify the values of Spacemacs settings."
                           :body (format "In %s minutes:" minutes-to-appt) message
                           :app-name "Emacs: Org"
                           :urgency "normal"
-                          :sound-name "alarm-clock-elapsed")
-    )
+                          :sound-name "alarm-clock-elapsed"))
   (setq appt-message-warning-time 15
         appt-display-mode-line t
         appt-display-format 'window
@@ -521,15 +522,59 @@ It should only modify the values of Spacemacs settings."
   (display-time)
 
   ;; Org mode settings
-  (setq org-directory "/home/gdquest/Dropbox/org/")
-  (setq org-default-notes-file (concat org-directory "tasks.org"))
+  (setq org-directory "/home/gdquest/Dropbox/org/"
+        org-default-notes-file (concat org-directory "notes.org")
+        org-capture-templates
+        '(("t" "Todo" entry (file+headline "tasks.org" "Tasks")
+           "* TODO %?\n  %i\n  %a")
+          ("n" "Note" entry (file+headline "notes.org" "Notes")
+           "* %?\nEntered on %U\n  %i\n  %a")))
   (setq org-todo-keywords '((sequence "TODO" "PROGRESS" "|" "DONE" "DELEGATED" "CANCELLED")))
-  (setq org-refile-targets
-        '((nil :maxlevel . 1)
-          (org-agenda-files :maxlevel . 1)))
+  ;; (setq org-refile-targets
+  ;;       '((nil :maxlevel . 1)
+  ;;         (org-agenda-files :maxlevel . 1)))
 
-  (setq company-show-numbers t)
+
+  ;; Flycheck
   (setq flycheck-check-syntax-automatically '(new-line save))
+  (flycheck-define-checker proselint
+    "A linter for prose."
+    :command ("proselint" source-inplace)
+    :error-patterns
+    ((warning line-start (file-name) ":" line ":" column ": "
+              (id (one-or-more (not (any " "))))
+              (message) line-end))
+    :modes (text-mode markdown-mode gfm-mode))
+  (add-to-list 'flycheck-checkers 'proselint)
+
+  ;; Enable TabNine on default
+  (add-to-list 'company-backends #'company-tabnine)
+
+  ;; Integrate company-tabnine with lsp-mode
+  (defun company-sort-by-tabnine (candidates)
+    (if (or (functionp company-backend)
+            (not (and (listp company-backend) (memq 'company-tabnine company-backend))))
+        candidates
+      (let ((candidates-table (make-hash-table :test #'equal))
+            candidates-lsp
+            candidates-tabnine)
+        (dolist (candidate candidates)
+          (if (eq (get-text-property 0 'company-backend candidate)
+                  'company-tabnine)
+              (unless (gethash candidate candidates-table)
+                (push candidate candidates-tabnine))
+            (push candidate candidates-lsp)
+            (puthash candidate t candidates-table)))
+        (setq candidates-lsp (nreverse candidates-lsp))
+        (setq candidates-tabnine (nreverse candidates-tabnine))
+        (nconc (seq-take candidates-tabnine 3)
+               (seq-take candidates-lsp 6)))))
+  (add-hook 'lsp-after-open-hook
+            (lambda ()
+              (setq company-tabnine-max-num-results 3)
+              (add-to-list 'company-transformers 'company-sort-by-tabnine t)
+              (add-to-list 'company-backends '(company-lsp :with company-tabnine :separate))))
+  (setq company-show-numbers t)
   (custom-set-faces
    '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
    '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
@@ -548,8 +593,7 @@ It should only modify the values of Spacemacs settings."
       (goto-char beg)
       (call-interactively 'evil-paste-before 1)))
 
-  (evil-define-text-object my/function-text-object (count)
-    "Text object for functions"
+  (evil-define-text-object evil-outer-function (count)
     (interactive)
     (save-mark-and-excursion
       (mark-defun)
@@ -564,11 +608,10 @@ It should only modify the values of Spacemacs settings."
   ;; Avy jump
   (define-key evil-normal-state-map (kbd "M-s") #'avy-goto-char-timer)
   (define-key evil-normal-state-map (kbd "M-w") #'avy-goto-word-1)
-  (define-key evil-motion-state-map (kbd "M-w") #'avy-goto-word-1)
 
   (define-key evil-normal-state-map "go" 'my/evil-replace-with-kill-ring)
-  (define-key evil-inner-text-objects-map "d" 'my/function-text-object)
-  (define-key evil-outer-text-objects-map "d" 'my/function-text-object)
+
+  (define-key evil-outer-text-objects-map "d" 'evil-outer-function)
   )
 
 (defun dotspacemacs/emacs-custom-settings ()
@@ -600,23 +643,37 @@ This function is called at the very end of Spacemacs initialization."
      ("FIXME" . "#dc752f"))))
  '(org-agenda-files
    (quote
-    ("/home/gdquest/Dropbox/org/projects/gdquest.org" "/home/gdquest/Dropbox/org/projects/kickstarter-2019.org" "/home/gdquest/Dropbox/org/calendar.org" "/home/gdquest/Dropbox/org/tasks.org" "/home/gdquest/Dropbox/org/routine.org")))
+    ("/home/gdquest/Dropbox/org/projects/gdquest.org" "/home/gdquest/Dropbox/org/projects/kickstarter-2019.org" "/home/gdquest/Dropbox/org/calendar.org" "/home/gdquest/Dropbox/org/tasks.org" "/home/gdquest/Dropbox/org/routine.org" "/home/gdquest/Dropbox/org/projects/maintenance.org")))
  '(package-selected-packages
    (quote
-    (utop tuareg caml seeing-is-believing rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocopfmt rubocop rspec-mode robe rbenv rake ocp-indent ob-elixir mvn minitest meghanada maven-test-mode lsp-java groovy-mode groovy-imports pcache gradle-mode git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter flycheck-ocaml merlin flycheck-mix flycheck-credo dune diff-hl chruby bundler inf-ruby browse-at-remote alchemist elixir-mode nodejs-repl livid-mode skewer-mode json-navigator hierarchy json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern tern tide typescript-mode import-js grizzl add-node-modules-path web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd helm-css-scss haml-mode emmet-mode company-web web-completion-data pandoc-mode ox-pandoc auto-complete-rst ranger gnu-elpa-keyring-update python helm-ctest cmake-mode cmake-ide levenshtein flyspell-popup beacon company-box lsp-python mmm-mode csv-mode org-journal rcirc-notify rcirc-color glsl-mode lsp-ui lsp-treemacs helm-lsp company-lsp lsp-mode anki-editor ggtags blacken auto-dim-other-buffers dracula-theme ac-ispell)))
+    (dap-mode bui tree-mode company auto-complete zeal-at-point yapfify yaml-mode xterm-color ws-butler winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide typescript-mode tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs ranger rainbow-mode rainbow-identifiers rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox spinner pandoc-mode ox-pandoc ht orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow magit-popup macrostep lorem-ipsum live-py-mode linum-relative link-hint insert-shebang indent-guide hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile helm-mode-manager helm-make helm-gtags helm-gitignore request helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md ggtags fuzzy flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emoji-cheat-sheet-plus emmet-mode elisp-slime-nav dumb-jump dracula-theme disaster diminish define-word cython-mode company-web company-statistics company-shell company-quickhelp company-emoji company-c-headers company-anaconda column-enforce-mode color-identifiers-mode cmake-mode clean-aindent-mode clang-format bind-key beacon auto-yasnippet auto-highlight-symbol auto-dim-other-buffers auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
  '(projectile-globally-ignored-directories
    (quote
     (".idea" ".ensime_cache" ".eunit" ".git" ".hg" ".fslckout" "_FOSSIL_" ".bzr" "_darcs" ".tox" ".svn" ".stack-work")))
- '(projectile-tags-backend (quote ggtags))
- '(projectile-tags-file-name "GTAGS"))
+ '(projectile-tags-backend (quote auto)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((((min-colors 16777216)) (:background "#282a36" :foreground "#f8f8f2")) (t (:background "#000000" :foreground "#f8f8f2"))))
  '(auto-dim-other-buffers-face ((t (:background "#16171e"))))
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
 )
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (company auto-complete zeal-at-point yapfify yaml-mode xterm-color ws-butler winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide typescript-mode tagedit spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs ranger rainbow-mode rainbow-identifiers rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el paradox spinner pandoc-mode ox-pandoc ht orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow magit-popup macrostep lorem-ipsum live-py-mode linum-relative link-hint insert-shebang indent-guide hydra lv hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile projectile helm-mode-manager helm-make helm-gtags helm-gitignore request helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md ggtags fuzzy flyspell-popup flyspell-correct-helm flycheck-pos-tip flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emoji-cheat-sheet-plus emmet-mode elisp-slime-nav dumb-jump dracula-theme disaster diminish define-word cython-mode company-web company-statistics company-shell company-quickhelp company-emoji company-c-headers company-anaconda column-enforce-mode color-identifiers-mode cmake-mode clean-aindent-mode clang-format bind-key beacon auto-yasnippet auto-highlight-symbol auto-dim-other-buffers auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((((min-colors 16777216)) (:background "#282a36" :foreground "#f8f8f2")) (t (:background "#000000" :foreground "#f8f8f2")))))
