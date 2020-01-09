@@ -32,7 +32,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(rust
+   '(csv
+     rust
      typescript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -48,7 +49,7 @@ This function should only modify configuration layer settings."
      emacs-lisp
      ;; rust
      (python :variables
-             python-format-on-save nil
+             python-format-on-save t
              python-formatter 'black
              python-fill-column 88
              python-shell-interpreter "python3")
