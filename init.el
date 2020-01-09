@@ -525,6 +525,8 @@ It should only modify the values of Spacemacs settings."
         '(("t" "Todo" entry (file+headline "tasks.org" "Tasks")
            "* TODO %?\n  %i\n  %a")
           ("n" "Note" entry (file+headline "notes.org" "Notes")
+           "* %?\nEntered on %U\n  %i\n  %a")
+          ("a" "Appointment" entry (file+headline "calendar.org" "Appointments")
            "* %?\nEntered on %U\n  %i\n  %a")))
   (setq org-todo-keywords '((sequence "TODO" "PROGRESS" "|" "DONE" "DELEGATED" "CANCELLED")))
   ;; (setq org-refile-targets
