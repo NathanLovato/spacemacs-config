@@ -137,7 +137,7 @@ It should only modify the values of Spacemacs settings."
    ;; to compile Emacs 27 from source following the instructions in file
    ;; EXPERIMENTAL.org at to root of the git repository.
    ;; (default nil)
-   dotspacemacs-enable-emacs-pdumper nil
+   dotspacemacs-enable-emacs-pdumper t
 
    ;; Name of executable file pointing to emacs 27+. This executable must be
    ;; in your PATH.
@@ -406,7 +406,7 @@ It should only modify the values of Spacemacs settings."
    ;; When used in a plist, `visual' takes precedence over `relative'.
    ;; (default nil)
    dotspacemacs-line-numbers '(:relative t
-                                        :size-limit-kb 1000)
+                                         :size-limit-kb 1000)
 
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
