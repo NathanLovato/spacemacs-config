@@ -533,6 +533,8 @@ It should only modify the values of Spacemacs settings."
   ;;       '((nil :maxlevel . 1)
   ;;         (org-agenda-files :maxlevel . 1)))
 
+  (require 're-builder)
+  (setq reb-re-syntax 'string)
 
   ;; Flycheck
   (setq flycheck-check-syntax-automatically '(new-line save))
