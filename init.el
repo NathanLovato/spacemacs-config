@@ -106,9 +106,7 @@ This function should only modify configuration layer settings."
                       auto-completion-enable-sort-by-usage t)
      )
 
-   dotspacemacs-additional-packages '(auto-dim-other-buffers
-                                      (godot-gdscript :location local)
-                                      beacon
+   dotspacemacs-additional-packages '((godot-gdscript :location local)
                                       company-tabnine)
 
    ;; A list of packages that cannot be updated.
@@ -124,7 +122,7 @@ This function should only modify configuration layer settings."
    ;; installs only the used packages but won't delete unused ones. `all'
    ;; installs *all* packages supported by Spacemacs and never uninstalls them.
    ;; (default is `used-only')
-   dotspacemacs-install-packages 'used-only))
+   dotspacemacs-install-packages 'used-but-keep-unused))
 
 (defun dotspacemacs/init ()
   "Initialization:
@@ -493,8 +491,6 @@ It should only modify the values of Spacemacs settings."
   This is the place where most of your configurations should be done. Unless it is
   explicitly specified that a variable should be set before a package is loaded,
   you should place your code here."
-
-  (require 'beacon)
 
   ;; Appointments and notifications
   (require 'notifications)
