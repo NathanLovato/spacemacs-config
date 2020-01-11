@@ -536,7 +536,7 @@ It should only modify the values of Spacemacs settings."
   ;;         (org-agenda-files :maxlevel . 1)))
 
   (require 're-builder)
-  (setq reb-re-syntax 'string)
+  (setq reb-re-syntax 'rx)
 
   ;; Major mode associations
   (add-to-list 'auto-mode-alist '("\\.tscn\\'" . toml-mode))
