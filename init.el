@@ -527,8 +527,10 @@ It should only modify the values of Spacemacs settings."
           ("n" "Note" entry (file+headline "notes.org" "Notes")
            "* %?\nEntered on %U\n  %i\n  %a")
           ("a" "Appointment" entry (file+headline "calendar.org" "Appointments")
-           "* %?\nEntered on %U\n  %i\n  %a")))
-  (setq org-todo-keywords '((sequence "TODO" "PROGRESS" "|" "DONE" "DELEGATED" "CANCELLED")))
+           "* %?\nEntered on %U\n  %i\n  %a"))
+        org-todo-keywords '((sequence "TODO" "PROGRESS" "|" "DONE" "DELEGATED" "CANCELLED"))
+        org-confirm-babel-evaluate nil
+        )
   ;; (setq org-refile-targets
   ;;       '((nil :maxlevel . 1)
   ;;         (org-agenda-files :maxlevel . 1)))
