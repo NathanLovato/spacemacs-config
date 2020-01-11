@@ -43,11 +43,11 @@ This function should only modify configuration layer settings."
 
      ;; Languages
      html
-     ;; (javascript :variables javascript-backend 'lsp)
+     (javascript :variables javascript-backend 'lsp)
      c-c++
      cmake
      emacs-lisp
-     ;; rust
+     rust
      (python :variables
              python-format-on-save t
              python-formatter 'black
