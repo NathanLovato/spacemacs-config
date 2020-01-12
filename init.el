@@ -547,8 +547,7 @@ It should only modify the values of Spacemacs settings."
   ;;         (org-agenda-files :maxlevel . 1)))
 
   (require 're-builder)
-  (setq reb-re-syntax 'rx)
-
+  (setq reb-re-syntax 'string)
   ;; Auto balance parens in lisp mode
   (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-emacs-lisp-mode)
   ;; Major mode associations
