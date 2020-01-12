@@ -47,6 +47,7 @@ This function should only modify configuration layer settings."
      c-c++
      cmake
      emacs-lisp
+     semantic
      rust
      (python :variables
              python-format-on-save t
@@ -57,7 +58,6 @@ This function should only modify configuration layer settings."
      shell-scripts
      markdown
      restructuredtext
-     ;; csv
 
      ;; VCS
      git
@@ -104,10 +104,9 @@ This function should only modify configuration layer settings."
                       auto-completion-idle-delay 0.05
                       auto-completion-enable-help-tooltip t
                       auto-completion-enable-snippets-in-popup t
-                      auto-completion-enable-sort-by-usage t)
-     )
+                      auto-completion-enable-sort-by-usage t))
 
-   dotspacemacs-additional-packages '((godot-gdscript :location local)
+   dotspacemacs-additional-packages '((gdscript-mode :location local)
                                       company-tabnine)
 
    ;; A list of packages that cannot be updated.
@@ -492,10 +491,10 @@ It should only modify the values of Spacemacs settings."
   This is the place where most of your configurations should be done. Unless it is
   explicitly specified that a variable should be set before a package is loaded,
   you should place your code here."
-
   ;; Appointments and notifications
   (require 'notifications)
   (require 'appt)
+  (require 'gdscript-mode)
   (defun appt-agenda-notify (minutes-to-appt time-current message)
     "Display a notification before scheduled events registered in org-agenda"
     (notifications-notify :title "Appointment"
