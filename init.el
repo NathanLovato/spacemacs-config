@@ -505,31 +505,43 @@ It should only modify the values of Spacemacs settings."
   (setq appt-message-warning-time 15
         appt-display-mode-line t
         appt-display-format 'window
-        appt-disp-window-function (function appt-agenda-notify))
-
+        appt-disp-window-function
+        (function appt-agenda-notify))
   ;; Update appointments automatically
   (org-agenda-to-appt)
-  (run-at-time "12:00am" (* 24 3600) 'org-agenda-to-appt)
+  (run-at-time "12:00am"
+               (* 24 3600)
+               'org-agenda-to-appt)
   (add-hook 'after-save-hook
             '(lambda ()
-               (if (seq-contains (org-agenda-files) (buffer-file-name))
+               (if (seq-contains (org-agenda-files)
+                                 (buffer-file-name))
                    (org-agenda-to-appt))))
   (appt-activate 1)
   (display-time)
 
   ;; Org mode settings
-  (setq org-directory "/home/gdquest/Dropbox/org/"
-        org-default-notes-file (concat org-directory "notes.org")
-        org-capture-templates
-        '(("t" "Todo" entry (file+headline "tasks.org" "Tasks")
-           "* TODO %?\n  %i\n  %a")
-          ("n" "Note" entry (file+headline "notes.org" "Notes")
-           "* %?\nEntered on %U\n  %i\n  %a")
-          ("a" "Appointment" entry (file+headline "calendar.org" "Appointments")
-           "* %?\nEntered on %U\n  %i\n  %a"))
-        org-todo-keywords '((sequence "TODO" "PROGRESS" "|" "DONE" "DELEGATED" "CANCELLED"))
-        org-confirm-babel-evaluate nil
-        )
+  (setq org-directory "/home/gdquest/Dropbox/org/")
+  (setq org-default-notes-file (concat org-directory "notes.org"))
+  (setq org-capture-templates '(("t" "Todo"
+                                 entry
+                                 (file+headline "tasks.org" "Tasks")
+                                 "* TODO %?\n  %i\n  %a")
+                                ("n" "Note"
+                                 entry
+                                 (file+headline "notes.org" "Notes")
+                                 "* %?\nEntered on %U\n  %i\n  %a")
+                                ("a" "Appointment"
+                                 entry
+                                 (file+headline "calendar.org" "Appointments")
+                                 "* %?\nEntered on %U\n  %i\n  %a")
+                                ("l" "Log"
+                                 entry
+                                 (file+headline "log.org" "Done")
+                                 "** %?\n%i\n")))
+  (setq org-todo-keywords '((sequence "TODO" "PROGRESS" "|" "DONE" "DELEGATED"
+                                      "CANCELLED")))
+  (setq org-confirm-babel-evaluate nil)
   ;; (setq org-refile-targets
   ;;       '((nil :maxlevel . 1)
   ;;         (org-agenda-files :maxlevel . 1)))
@@ -537,12 +549,18 @@ It should only modify the values of Spacemacs settings."
   (require 're-builder)
   (setq reb-re-syntax 'rx)
 
+  ;; Auto balance parens in lisp mode
+  (spacemacs/toggle-evil-safe-lisp-structural-editing-on-register-hook-emacs-lisp-mode)
   ;; Major mode associations
-  (add-to-list 'auto-mode-alist '("\\.tscn\\'" . toml-mode))
-  (setq spacemacs-large-file-modes-list '(archive-mode tar-mode jka-compr git-commit-mode image-mode doc-view-mode doc-view-mode-maybe ebrowse-tree-mode pdf-view-mode fundamental-mode ggtags-mode helm-gtags-mode tags-table-mode))
-
+  (add-to-list 'auto-mode-alist
+               '("\\.tscn\\'" . toml-mode))
+  (setq spacemacs-large-file-modes-list '(archive-mode tar-mode jka-compr git-commit-mode
+                                                       image-mode doc-view-mode doc-view-mode-maybe
+                                                       ebrowse-tree-mode pdf-view-mode fundamental-mode
+                                                       ggtags-mode helm-gtags-mode tags-table-mode))
   ;; Evil operators
-  (evil-define-operator my/evil-replace-with-kill-ring (beg end)
+  (evil-define-operator my/evil-replace-with-kill-ring
+    (beg end)
     "Replace text object with killring without changing the clipboard."
     :move-point nil
     (interactive "<r>")
@@ -550,52 +568,54 @@ It should only modify the values of Spacemacs settings."
       (delete-region beg end)
       (goto-char beg)
       (call-interactively 'evil-paste-before 1)))
-
-  (evil-define-text-object evil-outer-function (count)
+  (evil-define-text-object evil-outer-function
+    (count)
     (interactive)
-    (save-mark-and-excursion
-      (mark-defun)
-      (let ((m (mark)))
-        (if (looking-back "*/\n")
-            (progn
-              (previous-line)
-              (list m (first (sp-get-comment-bounds))))
-          (list m (point))))))
-
+    (save-mark-and-excursion (mark-defun)
+                             (let ((m (mark)))
+                               (if (looking-back "*/\n")
+                                   (progn
+                                     (previous-line)
+                                     (list m
+                                           (first (sp-get-comment-bounds))))
+                                 (list m
+                                       (point))))))
   ;; KEYBOARD MAPPINGS
   ;; Avy jump
   (define-key evil-normal-state-map (kbd "M-s") #'avy-goto-char-timer)
   (define-key evil-normal-state-map (kbd "M-w") #'avy-goto-word-1)
-
   (define-key evil-normal-state-map "go" 'my/evil-replace-with-kill-ring)
-
-  (define-key evil-outer-text-objects-map "d" 'evil-outer-function)
-
+  (define-key evil-outer-text-objects-map "d"
+    'evil-outer-function)
   (require 'flycheck)
   ;; Flycheck and proselint
   (setq flycheck-check-syntax-automatically '(new-line save))
   (flycheck-define-checker proselint
     "A linter for prose."
-    :command ("proselint" source-inplace)
-    :error-patterns
-    ((warning line-start (file-name) ":" line ":" column ": "
+    :command ("proselint" source-inplace):error-patterns
+    ((warning line-start
+              (file-name)
+              ":"
+              line
+              ":"
+              column
+              ": "
               (id (one-or-more (not (any " "))))
-              (message) line-end))
+              (message)
+              line-end))
     :modes (text-mode markdown-mode gfm-mode))
   (add-to-list 'flycheck-checkers 'proselint)
-
   (require 'company)
   ;; Integrate company-tabnine with lsp-mode
   (defun company-sort-by-tabnine (candidates)
     (if (or (functionp company-backend)
-            (not (and (listp company-backend) (memq 'company-tabnine company-backend))))
+            (not (and (listp company-backend)
+                      (memq 'company-tabnine company-backend))))
         candidates
-      (let ((candidates-table (make-hash-table :test #'equal))
-            candidates-lsp
+      (let ((candidates-table (make-hash-table :test #'equal)) candidates-lsp
             candidates-tabnine)
         (dolist (candidate candidates)
-          (if (eq (get-text-property 0 'company-backend candidate)
-                  'company-tabnine)
+          (if (eq (get-text-property 0 'company-backend candidate) 'company-tabnine)
               (unless (gethash candidate candidates-table)
                 (push candidate candidates-tabnine))
             (push candidate candidates-lsp)
@@ -607,15 +627,18 @@ It should only modify the values of Spacemacs settings."
   (add-hook 'lsp-after-open-hook
             (lambda ()
               (setq company-tabnine-max-num-results 3)
-              (add-to-list 'company-transformers 'company-sort-by-tabnine t)
-              (add-to-list 'company-backends '(company-lsp :with company-tabnine :separate))))
+              (add-to-list 'company-transformers 'company-sort-by-tabnine
+                           t)
+              (add-to-list 'company-backends
+                           '(company-lsp :with company-tabnine
+                                         :separate))))
   (setq company-show-numbers t)
-  (custom-set-faces
-   '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
-   '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+  (custom-set-faces '(company-tooltip-common ((t (:inherit company-tooltip :weight bold
+                                                           :underline nil))))
+                    '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold
+                                                                     :underline nil)))))
   ;; Enable TabNine on default
-  (add-to-list 'company-backends #'company-tabnine)
-  )
+  (add-to-list 'company-backends #'company-tabnine))
 
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.
